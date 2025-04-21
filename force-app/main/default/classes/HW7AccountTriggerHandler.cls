@@ -71,7 +71,8 @@ Public with sharing class HW7AccountTriggerHandler {
         // Validate CRUD permission for insering Contact fields
         if (!Schema.sObjectType.Contact.fields.LastName.isAccessible() || 
             !Schema.sObjectType.Contact.fields.AccountId.isAccessible() ||
-            !Schema.sObjectType.Contact.fields.Email.isAccessible()) {
+            !Schema.sObjectType.Contact.fields.Email.isAccessible() ||
+            !Schema.sObjectType.Contact.fields.Id.isAccessible()) {
             throw new System.SecurityException('You do not have access to one or more fields on Contact.');
         }
                 

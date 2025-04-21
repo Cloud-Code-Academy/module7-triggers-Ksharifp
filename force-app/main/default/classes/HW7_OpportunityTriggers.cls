@@ -10,6 +10,18 @@
 */
 
 
-Trigger q1OpportunityTrigger on Account (after insert) {
-    HW7OppoTriggerHandler.
+Trigger HW7_OpportunityTrigger on Opportunity (before Update, after update, before delete) {
+    if (Trigger.isBefore && Trigger.isUpdate) {
+        HW7OppoTriggerHandler.beforeUpdateOppoHandler();
+    } 
+
+    if (Trigger.isAfter && Trigger.isUpdate) {
+        HW7OppoTriggerHandler.afterUpdateSetCEOContact();
+    }
+
+    if (Trigger.isBefore && Trigger.isDelete) {
+        HW7OppoTriggerHandler.beforeDeleteClosedWon();
+    }
+
 }
+

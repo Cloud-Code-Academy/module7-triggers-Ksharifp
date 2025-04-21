@@ -1,92 +1,134 @@
 Public with sharing class HW7OppoTriggerHandler {
     
-    Public static void afterOppoHandler (List<Account> newAccounts) {
+    Public static void beforeUpdateOppoHandler (List<Opportunity> updatedOppo) {
 
         
         // Validating CRUD : basically copy/pasting the code in here just changing the error message.
-        if(!Schema.sObjectType.Account.isUpdateable()) {
+        if(!Schema.sObjectType.Opportunity.isAccessible()) {
+            throw new System.SecurityException('You do not have access to this opportunity record.');
+        }
+
+
+        // Validate field-level security if necessary
+        if (!Schema.sObjectType.Opportunity.fields.Id.isAccessible() ||
+            !Schema.sObjectType.Opportunity.fields.Name.isAccessible() ||
+            !Schema.sObjectType.Opportunity.fields.CloseDate.isAccessible() ||
+            !Schema.sObjectType.Opportunity.fields.StageName.isAccessible() ||
+            !Schema.sObjectType.Opportunity.fields.Amount.isAccessible() ||
+            !Schema.sObjectType.Opportunity.fields.Primary_Contact__r.Id.isAccessible()) {
+            throw new System.SecurityException('You do not have access to one or more fields on Opportunity.');
+        }
+
+
+        // Validating CRUD : basically copy/pasting the code in here just changing the error message.
+        if(!Schema.sObjectType.Account.isAccessible()) {
             throw new System.SecurityException('You do not have access to this record.');
         }
 
 
-        // Validate field-level security if necessary (such a pain!)
-        if (!Schema.sObjectType.Account.fields.Id.isAccessible() || 
-            !Schema.sObjectType.Account.fields.Rating.isAccessible() || 
-            !Schema.sObjectType.Account.fields.Type.isAccessible() || 
-            !Schema.sObjectType.Account.fields.BillingStreet.isAccessible() ||
-            !Schema.sObjectType.Account.fields.BillingCity.isAccessible() ||
-            !Schema.sObjectType.Account.fields.BillingState.isAccessible() ||
-            !Schema.sObjectType.Account.fields.BillingCountry.isAccessible() ||
-            !Schema.sObjectType.Account.fields.BillingPostalCode.isAccessible() ||
-            !Schema.sObjectType.Account.fields.ShippingStreet.isAccessible() ||
-            !Schema.sObjectType.Account.fields.ShippingCity.isAccessible() ||
-            !Schema.sObjectType.Account.fields.ShippingState.isAccessible() ||
-            !Schema.sObjectType.Account.fields.ShippingCountry.isAccessible() ||
-            !Schema.sObjectType.Account.fields.ShippingPostalCode.isAccessible() ||
-            !Schema.sObjectType.Account.fields.Primary_Contact__c.isAccessible()) {
+        // Validate field-level security if necessary
+        if (!Schema.sObjectType.Account.fields.Industry.isAccessible() ||
+            !Schema.sObjectType.Account.fields.Primary_Contact__r.Id.isAccessible()) {
             throw new System.SecurityException('You do not have access to one or more fields on Account.');
         }
 
 
-        //Getting Accounts with type = null
-        List<Account> newlyInsertedAccounts = [
-            SELECT Id,Type,Rating,BillingCity,BillingCountry,BillingPostalCode,BillingState,BillingStreet,
-                    ShippingCity,ShippingCountry,ShippingPostalCode,ShippingState,ShippingStreet
-            FROM Account
-            WHERE Id IN :newAccounts];
-        
-        
-        //List of accounts to be updated
-        List<Account> accToUpdate = new List<Account>();
+        // Validate CRUD permissions for inserting Contact
+        if (!Schema.sObjectType.Contact.isAccessible()) {
+            throw new System.SecurityException('You do not have permission to access Contact records.');
+        }
+                
 
-        //Going through new accounts without Type to set the fields values
-        for(Account acc1: newlyInsertedAccounts) {
-            if (acc1.ShippingAddress != null) {
-                acc1.BillingStreet = acc1.ShippingStreet;
-                acc1.BillingCity = acc1.ShippingCity;
-                acc1.BillingState = acc1.ShippingState;
-                acc1.BillingCountry = acc1.ShippingCountry;
-                acc1.BillingPostalCode = acc1.ShippingPostalCode; 
-            }
+        // Validate CRUD permission for insering Contact fields
+        if (!Schema.sObjectType.Contact.fields.Id.isAccessible() || 
+            !Schema.sObjectType.Contact.fields.AccountId.isAccessible() ||
+            !Schema.sObjectType.Contact.fields.Title.isAccessible()) {
+            throw new System.SecurityException('You do not have access to one or more fields on Contact.');
+        }
+       
 
-            if (acc1.Type = null) {
-                acc1.Type = 'Prospect';
-            }
+        List<Opportunity> updatedOppsLessFiveGrand = [
+            SELECT Id, Amount, StageName, Account.Id  
+            FROM Opportunity 
+            WHERE Id IN :updatedOppo AND Amount <= 5000];
 
-            if (acc1.Fax != null && acc1.Phone != null && acc1.Website != null) {
-                acc1.Rating = 'Hot';
+
+        if (!updatedOppsLessFiveGrand.isEmpty()) {
+            for (Opportunity opp : updatedOppsLessFiveGrand) {
+                if (opp.Amount <= 5000) {
+                    opp.addError('Opportunity amount must be greater than 5000.');
+                }
             }
-           
-            accToUpdate.add(acc1);
         }
 
-        update accToUpdate();
+
+    }
+
+
+    Public static void beforeDeleteClosedWon (List<Opportunity> deletedOppo) {
+
+        // Validating CRUD : basically copy/pasting the code in here just changing the error message.
+        if(!Schema.sObjectType.Account.isAccessible()) {
+            throw new System.SecurityException('You do not have access to this record.');
+        }
+
+
+        // Validate field-level security if necessary
+        if (!Schema.sObjectType.Account.fields.Industry.isAccessible()) {
+            throw new System.SecurityException('You do not have access to one or more fields on Account.');
+        }
+
+
+        for (Opportunity oppNotDelete : deletedOppo) {
+            if (oppNotDelete.StageName == 'ClosedWon' && oppNotDelete.Account.Industry == 'Banking') {
+                oppNotDelete.addError('You cannot delete a Closed Won opportunity for a Banking account.');
+            }
+        }
+    }
+
+    Public static void afterUpdateSetCEOContact (List<Opportunity> updatedOppo) {
+
+        if(!Schema.sObjectType.Account.isAccessible()) {
+            throw new System.SecurityException('You do not have access to this record.');
+        }
+
+
+        // Validate field-level security if necessary
+        if (!Schema.sObjectType.Account.fields.Primary_Contact__r.Id.isAccessible()) {
+            throw new System.SecurityException('You do not have access to one or more fields on Account.');
+        }
 
 
         // Validate CRUD permissions for inserting Contact
-        if (!Schema.sObjectType.Contact.isCreateable()) {
-            throw new System.SecurityException('You do not have permission to create Contact records.');
+        if (!Schema.sObjectType.Contact.isAccessible()) {
+            throw new System.SecurityException('You do not have permission to access Contact records.');
         }
                 
+
         // Validate CRUD permission for insering Contact fields
-        if (!Schema.sObjectType.Contact.fields.LastName.isAccessible() || 
+        if (!Schema.sObjectType.Contact.fields.Id.isAccessible() || 
             !Schema.sObjectType.Contact.fields.AccountId.isAccessible() ||
-            !Schema.sObjectType.Contact.fields.Email.isAccessible()) {
+            !Schema.sObjectType.Contact.fields.Title.isAccessible()) {
             throw new System.SecurityException('You do not have access to one or more fields on Contact.');
         }
-                
-        //List of contacts to be inserted
-        List<Contact> relatedContacts = new List<Contact>();
 
-        //Going through all new accounts to create related contacts
-        for (Account acc3 : newAccounts) {
-            //this was a short line of code I found on the help docs.
-            relatedContacts.add(new Contact(LastName = 'DefaultContact', AccountId = acc3.Id, Email = 'default@email.com')); 
+
+        List<Opportunity> oppsUpdatedWithCEOonAccount = [ 
+            SELECT Id, Account.Primary_Contact__c, Account.Primary_Contact__r.Title
+            FROM Opportunity 
+            WHERE Id IN :updatedOppo AND Account.Primary_Contact__r.Title = 'CEO'];
+
+        List<Opportunity> oppsToSetCEO = new List<Opportunity>();
+        
+
+        for (Opportunity opp : updatedOppo) {
+            if (opp.Account.Primary_Contact__r != null && opp.Account.Primary_Contact__r.Title == 'CEO') {
+                opp.Primary_Contact__c = opp.Account.Primary_Contact_c;
+                oppsToSetCEO.add(opp);
+            }
 
         }
-
-        insert relatedContacts;
+        update oppsToSetCEO;
 
     }
-    
 }
