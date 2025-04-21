@@ -11,6 +11,6 @@
 */
 
 
-Trigger q1AccountTrigger on Account (after insert) {
+Trigger AccountAfterInsertTrigger on Account (after insert) {
     HW7AccountTriggerHandler.afterAccountInsertHandler(Trigger.new);
 }
