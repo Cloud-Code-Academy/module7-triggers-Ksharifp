@@ -8,9 +8,9 @@ trigger accountTrigger on Account (before insert, before update, after insert) {
             AccountTriggerHandler.beforeInsertUpdateRating(Trigger.new);
             AccountTriggerHandler.beforeInsertUpdateAddressCopy(Trigger.new);
     	}	
-        if (Trigger.isUpdate) {
-            AccountTriggerHandler.beforeInsertUpdateAddressCopy(Trigger.new);
-        }
+        //if (Trigger.isUpdate) {
+            //AccountTriggerHandler.beforeInsertUpdateAddressCopy(Trigger.new);
+        //}
     }
 
 

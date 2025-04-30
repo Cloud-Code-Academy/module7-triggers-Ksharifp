@@ -124,7 +124,7 @@ public with sharing class TriggerTest {
             System.assertEquals('TS', insertedAccounts[i].BillingState, 'BillingState not correctly copied for account ' + i + '.');
             System.assertEquals('12345', insertedAccounts[i].BillingPostalCode, 'BillingPostalCode not correctly copied for account ' + i + '.');
             System.assertEquals('Test Country ' + i, insertedAccounts[i].BillingCountry, 'BillingCountry not correctly copied for account ' + i + '.');
-            insertedAccounts[i].ShippingStreet = '123 Test St';
+            insertedAccounts[i].ShippingStreet = '321 Test St';
         }
 
         Database.DMLOptions dml = new Database.DMLOptions();

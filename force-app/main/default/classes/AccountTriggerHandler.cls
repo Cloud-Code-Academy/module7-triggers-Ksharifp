@@ -6,14 +6,8 @@ Public with sharing class AccountTriggerHandler {
         //A method to create a contact related to the account with the following default values:(after insert)
 
 
-        // Validating CRUD : basically copy/pasting the code in here just changing the error message.
-        
+        // Validating CRUD
 
-
-    //if(!Schema.sObjectType.Account.isUpdateable()) {
-
-      //  throw new System.SecurityException('You do not have access to this record.');
-    //}
 
 
     Public static void beforeInsertSetType (List<Account> newAccounts) {
@@ -24,7 +18,6 @@ Public with sharing class AccountTriggerHandler {
 
             if (acc.Type == null) {
                 acc.Type = 'Prospect';
-                //accToUpdateType.add(acc);
             }
 
         }
@@ -38,17 +31,18 @@ Public with sharing class AccountTriggerHandler {
 
         for(Account acc : newAccounts) {
 
-            if (acc.ShippingAddress != null) {
+            //if (acc.ShippingAddress != null) {
                 acc.BillingStreet = acc.ShippingStreet;
                 acc.BillingCity = acc.ShippingCity;
                 acc.BillingState = acc.ShippingState;
                 acc.BillingCountry = acc.ShippingCountry;
                 acc.BillingPostalCode = acc.ShippingPostalCode;
-
-            }
+                System.debug(acc.BillingStreet);
+                System.debug(acc.ShippingStreet);
+            //}
 
         }
-
+        
     }
 
 
