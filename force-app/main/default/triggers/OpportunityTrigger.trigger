@@ -7,4 +7,10 @@ trigger OpportunityTrigger on Opportunity (before update, before delete) {
             OpportunityTriggerHandler.beforeDeleteAccountCheck(Trigger.old);
         }
     }
+
+    if (Trigger.isAfter) {
+        if (Trigger.isUpdate) {
+            OpportunityTriggerHandler.afterUpdateSetContact(Trigger.old);
+        }
+    }
 }

@@ -80,7 +80,11 @@ Public with sharing class OpportunityTriggerHandler {
             throw new System.SecurityException('You do not have access to Account records.');
         }
 
+        if (!Schema.sObjectType.Opportunity.fields.Primary_Contact__c.isUpdateable()) {
+            throw new System.SecurityException('You do not have permission to update the Primary Contact field.');
+        }
 
+        
         //I am querying the opps so that I can look at the title of the contact on the account and also use its Id.
 
         Set<Id> accId = new Set<Id>();
@@ -89,8 +93,7 @@ Public with sharing class OpportunityTriggerHandler {
             accId.add(opp.AccountId);
         }
 
-        // I filtered this query to find the primary contacts who have a title of CEO. I assume the accounts a CEO Contact,
-        // would not want their opportunity to be updated.
+        // I filtered this query to find the primary contacts who have a title of CEO. 
         // The Child Relationship Name of the Contact Lookup field on the Account is Called "Organizations"
 
         //List<Account> accs = [SELECT Id, 
@@ -100,7 +103,7 @@ Public with sharing class OpportunityTriggerHandler {
 
         List<Contact> conCEO = [SELECT Id, Title, AccountId 
                                 From Contact
-                                Where AccountId IN :accId AND Title = 'CEO'];
+                                Where Title LIKE 'CEO' AND AccountId IN :accId];
 
         Map<Id,Id> accIdContactId = new Map<Id,Id>();
 
@@ -110,12 +113,14 @@ Public with sharing class OpportunityTriggerHandler {
 
         }
         
+        List<Opportunity> oppsToUpdate = new List<Opportunity>();
+
         for (Opportunity opp: newOpps) {
             
             opp.Primary_Contact__c = accIdContactId.get(opp.AccountId);
-            
+            oppsToUpdate.add(opp);
         }
-
+        update oppsToUpdate;
     }
 
 }
