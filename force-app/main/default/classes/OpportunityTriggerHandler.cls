@@ -96,10 +96,6 @@ Public with sharing class OpportunityTriggerHandler {
         // I filtered this query to find the primary contacts who have a title of CEO. 
         // The Child Relationship Name of the Contact Lookup field on the Account is Called "Organizations"
 
-        //List<Account> accs = [SELECT Id, 
-                                //(SELECT Title, Id FROM Organizations WHERE Title = 'CEO')
-                              //FROM Account 
-                              //WHERE Id IN :accId];
 
         List<Contact> conCEO = [SELECT Id, Title, AccountId 
                                 From Contact
@@ -112,15 +108,12 @@ Public with sharing class OpportunityTriggerHandler {
             accIdContactId.put(con.AccountId, con.Id);
 
         }
-        
-        List<Opportunity> oppsToUpdate = new List<Opportunity>();
 
         for (Opportunity opp: newOpps) {
             
             opp.Primary_Contact__c = accIdContactId.get(opp.AccountId);
-            oppsToUpdate.add(opp);
+
         }
-        update oppsToUpdate;
     }
 
 }
