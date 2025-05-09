@@ -66,7 +66,7 @@ Public with sharing class OpportunityTriggerHandler {
     }
 
 
-    Public static void afterUpdateSetContact (List<Opportunity> newOpps) {
+    Public static void beforeUpdateSetContact (List<Opportunity> newOpps) {
         
         // Validate CRUD permissions for Contact object
 
