@@ -37,8 +37,6 @@ Public with sharing class AccountTriggerHandler {
                 acc.BillingState = acc.ShippingState;
                 acc.BillingCountry = acc.ShippingCountry;
                 acc.BillingPostalCode = acc.ShippingPostalCode;
-                System.debug(acc.BillingStreet);
-                System.debug(acc.ShippingStreet);
             //}
 
         }
