@@ -62,7 +62,6 @@ Public with sharing class OpportunityTriggerHandler {
                 opp.addError('Cannot delete closed opportunity for a banking account that is won');
             }
         } 
-        
     }
 
 
