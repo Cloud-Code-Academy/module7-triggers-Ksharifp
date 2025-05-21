@@ -27,7 +27,7 @@ public with sharing class TriggerTest {
     /*
     * Question 1
     * Account Trigger
-    * When an account is inserted change the account type to 'Prospect' if there is no value in the type field.
+    * When an account is inserted change the account type to 'Prospect' if there is no value in the type field.(before insert)
     * Trigger should only fire on insert.
     */
     @IsTest 
@@ -80,7 +80,7 @@ public with sharing class TriggerTest {
     /*
     * Question 2
     * Account Trigger
-    * When an account is inserted copy the shipping address to the billing address.
+    * When an account is inserted copy the shipping address to the billing address.(before insert and update)
     * BONUS: Check if the shipping fields are empty before copying.
     * Trigger should only fire on insert.
     */
@@ -203,7 +203,7 @@ public with sharing class TriggerTest {
     /*
     * Question 4
     * Account Trigger
-    * When an account is inserted create a contact related to the account with the following default values:
+    * When an account is inserted create a contact related to the account with the following default values:(after insert)
     * LastName = 'DefaultContact'
     * Email = 'default@email.com'
     * Trigger should only fire on insert.
@@ -340,6 +340,7 @@ public with sharing class TriggerTest {
         Test.stopTest();
     }
 
+    
     /*
     * Question 7
     * Opportunity Trigger
