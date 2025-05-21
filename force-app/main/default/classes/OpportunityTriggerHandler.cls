@@ -5,6 +5,7 @@ Public with sharing class OpportunityTriggerHandler {
         //A method to set the rating to 'Hot' if the Phone, Website, and Fax ALL have a value. (before insert and update)
         //A method to create a contact related to the account with the following default values:(after insert)
 
+        
 
     
     // Validate CRUD permissions for Opportunity object
@@ -85,7 +86,7 @@ Public with sharing class OpportunityTriggerHandler {
 
         
         //I am querying the opps so that I can look at the title of the contact on the account and also use its Id.
-        
+
 
         Set<Id> accId = new Set<Id>();
 
