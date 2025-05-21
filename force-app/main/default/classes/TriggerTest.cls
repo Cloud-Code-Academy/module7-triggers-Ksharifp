@@ -340,6 +340,7 @@ public with sharing class TriggerTest {
         Test.stopTest();
     }
 
+    
     /*
     * Question 7
     * Opportunity Trigger

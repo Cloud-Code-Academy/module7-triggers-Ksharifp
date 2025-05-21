@@ -9,7 +9,6 @@ Public with sharing class AccountTriggerHandler {
         // Validating CRUD
 
 
-
     Public static void beforeInsertSetType (List<Account> newAccounts) {
         
         //Going through new accounts without Type to set the Type field values

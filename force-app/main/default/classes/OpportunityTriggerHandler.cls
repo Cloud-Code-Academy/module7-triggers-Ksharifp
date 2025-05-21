@@ -85,6 +85,7 @@ Public with sharing class OpportunityTriggerHandler {
 
         
         //I am querying the opps so that I can look at the title of the contact on the account and also use its Id.
+        
 
         Set<Id> accId = new Set<Id>();
 
