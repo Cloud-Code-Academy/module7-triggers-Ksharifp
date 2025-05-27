@@ -118,4 +118,3 @@ Public with sharing class OpportunityTriggerHandler {
     }
 
 }
-
